@@ -2,9 +2,15 @@
 
 ## Placeholder for MSCCYB1, Secure Programming for Web Group 6 project code.
 
+The 'clabaireact' web app allows users to post messages and images in an informal journal style form for visitors or other users to read. 
+In Gaelige 'clabaireacht' means chit-chat or babbling. Pronunciation: https://www.teanglann.ie/en/fuaim/clabaireacht
+
 ## Requirements
 
 pipenv - to ensure python versioning and dependencies. https://pipenv-fork.readthedocs.io/en/latest/basics.html
+
+$ pipenv install
+$ pipenv shell
 
 ## Working in this repo:
 
@@ -21,10 +27,11 @@ PRs must include a description what  has changed, what may be missing, and any t
 Work will be divided to avoid too many team members working on the same area of code at once. 
 
 If you are working on code you should commit your changes when done. 
+
 # TODO:
 
 * add a Makefile for format, check and test. 
 > black - git hook?
 > safety
 > snyk?
-> ? dokcer based from cytopia?
+> ? docker based from cytopia?

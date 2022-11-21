@@ -53,8 +53,10 @@ def setup(delete: bool, db_path: str, schema_path: str):
     except Exception as e:
         print(f"Failed to load schema. {e}")
         raise
-    click.echo("Schema loaded for USER and CONTENT DB.") 
+    click.echo("Schema loaded for USER and CONTENT DB.")
 
+    user_db.close()
+    content_db.close()
     return
 
 

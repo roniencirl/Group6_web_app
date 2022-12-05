@@ -4,7 +4,7 @@ BANDIT_EXE :=	docker run --rm \
 		-w=/data \
 		cytopia/bandit \
 			-r . \
-			-lll
+			-l
 
 
 .PHONY: bandit_check 

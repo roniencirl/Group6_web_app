@@ -1,0 +1,3 @@
+uses: jpetrucciani/bandit-check@master
+with:
+  bandit_flags: "-r -lll -o output.json -f json"

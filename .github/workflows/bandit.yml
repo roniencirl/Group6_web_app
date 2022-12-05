@@ -1,2 +1,2 @@
-- name: Bandit security linter
+name: Bandit security linter
   uses: tj-actions/bandit@v5.1

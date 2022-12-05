@@ -7,6 +7,7 @@ else
 	make -f $(MAKEFILE) black_check
 	make -f $(MAKEFILE) pylint_check
 	make -f $(MAKEFILE) mypy_check
+	make -f $(MAKEFILE) bandit_check
 endif
 
 .PHONY: python_check_format

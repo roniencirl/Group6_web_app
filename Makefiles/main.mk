@@ -17,7 +17,7 @@ REPO_DIR :=  $(realpath $(dir $(MAKEFILES_DIR)))
 -include $(MAKEFILES_DIR)/Python/pytest.mk
 -include $(MAKEFILES_DIR)/Python/docker.mk
 -include $(MAKEFILES_DIR)/Python/bandit.mk
-
+-include $(MAKEFILES_DIR)/Python/safety.mk
 
 # Targets 
 -include $(MAKEFILES_DIR)/Targets/check.mk

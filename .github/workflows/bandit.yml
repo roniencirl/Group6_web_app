@@ -1,3 +1,2 @@
-uses: jpetrucciani/bandit-check@master
-with:
-  bandit_flags: "-r -lll -o output.json -f json"
+- name: Bandit security linter
+  uses: tj-actions/bandit@v5.1

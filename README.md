@@ -2,7 +2,7 @@
 
 ## Placeholder for MSCCYB1, Secure Programming for Web Group 6 project code.
 
-The 'clabaireact' web app allows users to post messages and images in an informal journal style form for visitors or other users to read. 
+The 'clabaireacht' web app allows users to post messages and images in an informal journal style form for visitors or other users to read. 
 In Gaelige 'clabaireacht' means chit-chat or babbling. Pronunciation: https://www.teanglann.ie/en/fuaim/clabaireacht
 
 ## Requirements

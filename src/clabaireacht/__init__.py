@@ -8,10 +8,10 @@ POSTDB_SECRET = None
 def create_app():
     clabaireact = Flask(__name__, instance_relative_config=True)
     print(__name__)
-    clabaireact.config.from_mapping(
-        SECRET_KEY="dev",
-        DATABASE=os.path.join(clabaireact.instance_path, "flaskr.sqlite"),
-    )
+    # clabaireact.config.from_mapping(
+    #     SECRET_KEY="dev",
+    #     DATABASE=os.path.join(clabaireact.instance_path, "flaskr.sqlite"),
+    # )
     clabaireact.config.from_envvar("USERDB_SECRET", silent=True)
     clabaireact.config.from_envvar("POSTDB_SECRET", silent=True)
 

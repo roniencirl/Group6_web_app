@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 
 USERDB_SECRET = None
 POSTDB_SECRET = None
@@ -21,9 +21,12 @@ def create_app():
     except OSError:
         pass
 
-    @clabaireact.route("/ping")
+    @clabaireact.route("/")
     def hello() -> str:
         # web application reachability check
-        return "pong"
+     return render_template('index.html')
+    
+    from . import user
+    clabaireact.register_blueprint(user.bp)
 
     return clabaireact

@@ -31,5 +31,4 @@ def create_app():
     clabaireacht.register_blueprint(user.bp)
     clabaireacht.register_blueprint(posts.bp)
 
-    database.init_app(clabaireacht)
     return clabaireacht

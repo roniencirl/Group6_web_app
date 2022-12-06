@@ -1,6 +1,0 @@
-CREATE TABLE users (
-  uuid INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE NOT NULL,
-  email TEXT NOT NULL,
-  password TEXT NOT NULL
-);

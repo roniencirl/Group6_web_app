@@ -1,9 +1,8 @@
 import sqlite3
-import click
 import os, errno
+import click
 
-USER_DB = "users"
-CONTENT_DB = "posts"
+DATABASE = "clabaireacht"
 
 
 def sanitize_path(path: str):
@@ -19,9 +18,9 @@ def delete_db(path: str):
             raise
 
 
-def load_schema(path: str, db: sqlite3.Connection):
+def load_schema(path: str, database: sqlite3.Connection):
     with open(path, "r") as file:
-        db.executescript(file.read())
+        database.executescript(file.read())
 
 
 @click.command()
@@ -39,24 +38,24 @@ def setup(delete: bool, db_path: str, schema_path: str):
     clean_schema_path = sanitize_path(schema_path)
 
     if delete:
-        delete_db(f"{clean_db_path}/{USER_DB}.sqlite")
-        delete_db(f"{clean_db_path}/{CONTENT_DB}.sqlite")
-        click.echo(f"{clean_db_path}/{USER_DB}.sqlite Deleted.")
-        click.echo(f"{clean_db_path}/{CONTENT_DB}.sqlite Deleted.")
-
-    user_db = sqlite3.connect(f"{clean_db_path}/{USER_DB}.sqlite")
-    content_db = sqlite3.connect(f"{clean_db_path}/{CONTENT_DB}.sqlite")
+        delete_db(f"{clean_db_path}/{DATABASE}.sqlite")
+        click.echo(f"{clean_db_path}/{DATABASE}.sqlite Deleted.")
 
     try:
-        load_schema(f"{clean_schema_path}/{USER_DB}.sql", user_db)
-        load_schema(f"{clean_schema_path}/{CONTENT_DB}.sql", content_db)
+        os.makedirs(f"{clean_db_path}", mode=0o700)
+    except OSError:
+        pass
+
+    database = sqlite3.connect(f"{clean_db_path}/{DATABASE}.sqlite")
+
+    try:
+        load_schema(f"{clean_schema_path}/{DATABASE}.sql", database)
     except Exception as e:
         print(f"Failed to load schema. {e}")
         raise
-    click.echo("Schema loaded for USER and CONTENT DB.")
+    click.echo(f"Schema loaded to database: {clean_db_path}/{DATABASE}.sqlite")
 
-    user_db.close()
-    content_db.close()
+    database.close()
     return
 
 

@@ -34,7 +34,7 @@ CREATE TABLE users (
   user_firstname TEXT NOT NULL,
   user_lastname TEXT NOT NULL, 
   user_email TEXT NOT NULL, 
-  user_registered TEXT NOT NULL,
+  user_registered TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_last_login TEXTNOT NULL, 
   user_status TEXT NOT NULL
 );

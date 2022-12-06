@@ -7,7 +7,9 @@ In Gaelige 'clabaireacht' means chit-chat or babbling. Pronunciation: https://ww
 
 ## Requirements
 
-pipenv - to ensure python versioning and dependencies. https://pipenv-fork.readthedocs.io/en/latest/basics.html
+pipenv - to ensure python versioning and dependencies.
+https://pipenv.pypa.io/en/latest/
+https://pipenv-fork.readthedocs.io/en/latest/basics.html
 
 $ pipenv install
 $ pipenv shell
@@ -22,16 +24,26 @@ Pull requests can be raised directly against the main branch on github.
 
 Commits must include a brief description of the changes made.  
 
-PRs must include a description what  has changed, what may be missing, and any testing carried out. PRs should must be merged with the branch HEAD before being raised.  
+PRs must include a description what has changed, what may be missing, and any testing carried out. 
+
+PRs must be approved by one other team member before being merged (github enforced)
+
+PRs should must be merged with the remote branch HEAD before being raised.  
 
 Work will be divided to avoid too many team members working on the same area of code at once. 
 
 If you are working on code you should commit your changes when done. 
 
-# TODO:
+Makefiles are configured for linting, formating, SAST and dependency checks. 
+Note a Docker Hub login is required for some checks.
 
-* add a Makefile for format, check and test. 
-> black - git hook?
-> safety
-> snyk?
-> ? docker based from cytopia?
+to perform all python checks run:
+$ make python_check
+
+to format with black run:
+$ make python_check_format
+
+
+TODO:
+* add a Makefile for format, check and test. [Done]
+

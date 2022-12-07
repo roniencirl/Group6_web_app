@@ -33,7 +33,6 @@ CREATE TABLE users (
   user_password TEXT NOT NULL,
   user_firstname TEXT NOT NULL,
   user_lastname TEXT NOT NULL, 
-  user_email TEXT NOT NULL, 
   user_registered TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   user_last_login TIMESTAMP NOT NULL DEFAULT "1970-01-01 00:00:00", 
   user_status TEXT NOT NULL

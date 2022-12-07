@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 flask = "*"
+email-validator = "*"
 
 [dev-packages]
 black = "*"

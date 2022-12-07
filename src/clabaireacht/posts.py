@@ -10,6 +10,7 @@ from flask import (
 )
 
 from clabaireacht.database import get_database
+from clabaireacht.auth import login_required
 
 
 bp = Blueprint("posts", __name__)
@@ -17,10 +18,8 @@ bp = Blueprint("posts", __name__)
 
 @bp.route("/")
 def index():
-    database = get_database()
-    print(type(database))
-    print(database)
-    posts = database.execute(
+    db = get_database()
+    posts = db.execute(
         "SELECT p.id, title, body, created, author_id, user_login"
         " FROM posts p JOIN users u ON p.author_id = u.user_id"
         " ORDER BY created DESC"
@@ -29,7 +28,7 @@ def index():
 
 
 @bp.route("/create", methods=("GET", "POST"))
-# @login_required
+@login_required
 def create():
     if request.method == "POST":
         title = request.form["title"]
@@ -46,10 +45,7 @@ def create():
         else:
             database = get_database()
 
-            if current_app.config["SECRET_KEY"] == "dev" and "user" not in g:
-                user_id = "testing"
-            else:
-                user_id = g.user["id"]
+            user_id = g.user["user_id"]
 
             database.execute(
                 "INSERT INTO posts (title, body, author_id)" " VALUES (?, ?, ?)",

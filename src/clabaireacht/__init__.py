@@ -2,9 +2,9 @@ import os
 from flask import Flask, render_template
 from . import database
 from . import posts
-from . import user
+from . import auth
 
-PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", None))
+PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
 
 # flask application factory
 def create_app():
@@ -27,7 +27,7 @@ def create_app():
         """ " Web application reachability check"""
         return "pong"
 
-    clabaireacht.register_blueprint(user.bp)
+    clabaireacht.register_blueprint(auth.bp)
     clabaireacht.register_blueprint(posts.bp)
 
     return clabaireacht

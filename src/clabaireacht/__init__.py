@@ -4,8 +4,7 @@ from . import database
 from . import posts
 from . import user
 
-DB_SECRET = None
-POSTDB_SECRET = None
+PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", None))
 
 # flask application factory
 def create_app():
@@ -14,8 +13,8 @@ def create_app():
     clabaireacht.config.from_mapping(
         SECRET_KEY="dev",
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
+        PW_PEPPER_SECRET=PW_PEPPER_SECRET,
     )
-    clabaireacht.config.from_envvar("DB_SECRET", silent=True)
 
     # ensure the instance folder exists
     try:

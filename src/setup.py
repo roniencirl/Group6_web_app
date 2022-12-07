@@ -1,13 +1,11 @@
 import sqlite3
 import os, errno
 import click
+from clabaireacht.utilities import sanitize_path
 
 DATABASE = "clabaireacht"
 
 
-def sanitize_path(path: str):
-    """Returns a sanitized path which is relative to current directory and does not include directory traversal"""
-    return os.path.relpath(os.path.normpath(os.path.join("/", path)), "/")
 
 
 def delete_db(path: str):

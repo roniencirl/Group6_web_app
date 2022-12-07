@@ -14,6 +14,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from clabaireacht.database import get_database
+from clabaireacht.utilities import valid_email
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -38,6 +39,8 @@ def register():
 
         # TODO: sanitize and validate.
         # username must be an email address
+        if not valid_email(email=username):
+            error = "Please provide a valid email address."
 
         if error is None:
             try:
@@ -80,28 +83,33 @@ def login():
         password = request.form["password"]
 
         # TODO: Sanitise
-
-        db = get_database()
         error = None
-        user = db.execute(
-            "SELECT * FROM users WHERE user_login = ?", (username,)
-        ).fetchone()
 
-        if None in [user, password]:
-            error = "Please provide an email address and password."
-        elif not check_password_hash(
-            user["user_password"], current_app.config["PW_PEPPER_SECRET"] + password
-        ):
-            error = "Incorrect email address or password."
-            print(user["user_password"])
-            print(current_app.config["PW_PEPPER_SECRET"] + password)
+        if not valid_email(email=username):
+            error = "Please provide a valid email address."
+
+        #     
+        if error is None:
+            db = get_database()
+            user = db.execute(
+                "SELECT * FROM users WHERE user_login = ?", (username,)
+            ).fetchone()
+
+            if None in [user, password]:
+                error = "Please provide an email address and password."
+            elif not check_password_hash(
+                user["user_password"], current_app.config["PW_PEPPER_SECRET"] + password
+            ):
+                error = "Incorrect email address or password."
+                print(user["user_password"])
+                print(current_app.config["PW_PEPPER_SECRET"] + password)
 
         if error is None:
             session.clear()
             session["user_id"] = user["user_id"]
             print(session)
             return redirect(url_for("posts.index"))
-
+        
         flash(error)
 
     return render_template("/auth/login.html")
@@ -124,7 +132,7 @@ def load_logged_in_user():
 @bp.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("index"))
+    return redirect(url_for("posts.index"))
 
 
 def login_required(view):

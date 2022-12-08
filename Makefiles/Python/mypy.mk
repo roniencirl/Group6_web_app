@@ -1,8 +1,7 @@
 MYPY_EXE := docker run --rm \
-		--entrypoint="mypy" \
 		-v $(shell pwd):/data \
 		-w=/data \
-		cytopia/latest-py3.8 \
+		cytopia/mypy\
 			. 
 
 .PHONY: create_mypy_ini

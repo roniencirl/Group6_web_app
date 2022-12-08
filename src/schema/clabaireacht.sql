@@ -33,9 +33,8 @@ CREATE TABLE users (
   user_password TEXT NOT NULL,
   user_firstname TEXT NOT NULL,
   user_lastname TEXT NOT NULL, 
-  user_email TEXT NOT NULL, 
-  user_registered TEXT NOT NULL,
-  user_last_login TEXTNOT NULL, 
+  user_registered TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  user_last_login TIMESTAMP NOT NULL DEFAULT "1970-01-01 00:00:00", 
   user_status TEXT NOT NULL
 );
 
@@ -54,7 +53,7 @@ CREATE TABLE user_groups (
   FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
-CREATE TABLE post (
+CREATE TABLE posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

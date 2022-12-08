@@ -1,32 +1,33 @@
 import os
 from flask import Flask, render_template
+from . import database
+from . import posts
+from . import auth
 
-USERDB_SECRET = None
-POSTDB_SECRET = None
+PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
 
 # flask application factory
 def create_app():
-    clabaireact = Flask(__name__, instance_relative_config=True)
+    clabaireacht = Flask(__name__, instance_relative_config=True)
     print(__name__)
-    clabaireact.config.from_mapping(
+    clabaireacht.config.from_mapping(
         SECRET_KEY="dev",
-        DATABASE=os.path.join(clabaireact.instance_path, "flaskr.sqlite"),
+        DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
+        PW_PEPPER_SECRET=PW_PEPPER_SECRET,
     )
-    clabaireact.config.from_envvar("USERDB_SECRET", silent=True)
-    clabaireact.config.from_envvar("POSTDB_SECRET", silent=True)
 
     # ensure the instance folder exists
     try:
-        os.makedirs(clabaireact.instance_path, mode=0o600)
+        os.makedirs(clabaireacht.instance_path, mode=0o700)
     except OSError:
         pass
 
-    @clabaireact.route("/")
-    def hello() -> str:
-        # web application reachability check
-     return render_template('index.html')
-    
-    from . import user
-    clabaireact.register_blueprint(user.bp)
+    @clabaireacht.route("/ping")
+    def pong() -> str:
+        """ " Web application reachability check"""
+        return "pong"
 
-    return clabaireact
+    clabaireacht.register_blueprint(auth.bp)
+    clabaireacht.register_blueprint(posts.bp)
+
+    return clabaireacht

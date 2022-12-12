@@ -59,5 +59,8 @@ CREATE TABLE posts (
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
   body TEXT NOT NULL,
+  img BLOB,
+  xcoord INTEGER,
+  ycoord INTEGER,
   FOREIGN KEY (author_id) REFERENCES users (user_id)
 );

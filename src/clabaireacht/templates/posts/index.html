@@ -13,13 +13,15 @@
     <header>
         <div>
             <h1>{{ post['title'] }}</h1>
-            <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+            <div class="about">by {{ post['user_firstname'] }} {{ post['user_lastname'] }} on {{
+                post['created'].strftime('%Y-%m-%d %H:%M') }}</div>
         </div>
         {% if g.user['id'] == post['author_id'] %}
         <a class="action" href="{{ url_for('posts.update', id=post['id']) }}">Edit</a>
         {% endif %}
     </header>
     <p class="body">{{ post['body'] }}</p>
+    <img class="image" src="/image/{{ post['id'] }}" style="width: 55vw; min-width: 330px;">
 </article>
 {% if not loop.last %}
 <hr>

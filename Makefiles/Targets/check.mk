@@ -1,6 +1,6 @@
 .PHONY: python_check
 python_check:
-ifeq ($(strip $(shell find . -type f -name "*.py" -not -path "./.Makefiles/*")),)
+ifeq ($(strip $(shell find . -type f -name "*.py" -not -path "./Makefiles/*")),)
 	echo "Did not find any .py files. Skipping Node check"
 else
 	@echo "################## Running Python Check Stage ##################"
@@ -13,55 +13,19 @@ endif
 
 .PHONY: python_check_format
 python_check_format:
-ifeq ($(strip $(shell find . -type f -name "*.py" -not -path "./.Makefiles/*")),)
+ifeq ($(strip $(shell find . -type f -name "*.py" -not -path "./Makefiles/*")),)
 	echo "Did not find any .py files. Skipping Node check"
 else
 	make -f $(MAKEFILE) black_format
 endif
 
-.PHONY: node_check
-node_check:
-ifeq ($(strip $(shell find . -type f -name "package.json" -not -path "./.Makefiles/*")),)
-	@echo "Did not find any package.json files. Skipping Node check"
-else
-	@echo "################## Running Node Check Stage ##################"
-	make -f $(MAKEFILE) standard_js_check
-endif
-
 .PHONY: node_format
 node_format:
-ifeq ($(strip $(shell find . -type f -name "package.json" -not -path "./.Makefiles/*")),)
+ifeq ($(strip $(shell find . -type f -name "package.json" -not -path "./Makefiles/*")),)
 	@echo "Did not find any package.json files. Skipping Node check"
 else
 	@echo "################## Running Node Check Format Stage ##################"
 	make -f $(MAKEFILE) standard_js_format
-endif
-
-.PHONY: js_frontend_check
-js_frontend_check:
-ifeq ($(strip $(shell find . -type f -name ".ember-cli-build.js" -not -path "./.Makefiles/*")),)
-	@echo "Did not find any .ember-cli-build.js files. Skipping JS Frontend check"
-else
-	@echo "################## Running JS Fontend Check Stage ##################"
-	make -f $(MAKEFILE) frontend_lint_check
-endif
-
-.PHONY: go_check
-go_check:
-ifeq ($(strip $(shell find . -type f -name "go.mod" -not -path "./.Makefiles/*")),)
-	@echo "Did not find any go.mod files. Skipping Go check"
-else
-	@echo "################## Running GO Check Stage ##################"
-	make -f $(MAKEFILE) go_lint_check
-endif
-
-.PHONY: groovy_check
-groovy_check:
-ifeq ($(strip $(shell find . -type f -name "*.groovy" -not -path "./.Makefiles/*")),)
-	@echo "Did not find any .groovy files. Skipping Groovy check"
-else
-	@echo "################## Running Groovy Check Stage ##################"
-	make -f $(MAKEFILE) groovy_lint_check
 endif
 
 .PHONY: docker_check

@@ -5,6 +5,7 @@ $(VERBOSE).SILENT:
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MAKEFILES_DIR := $(realpath $(notdir $(patsubst %/,%,$(dir $(MKFILE_PATH)))))
 ROOT_DIR := $(patsubst %/,%,$(dir $(MAKEFILES_DIR)))
+MAKEFILE := ${ROOT_DIR}/Makefile
 REPO_DIR :=  $(realpath $(dir $(MAKEFILES_DIR)))
 
 # Commands

@@ -29,7 +29,9 @@ def register():
         db = get_database()  # pylint: disable=invalid-name
         error = None
 
-        if None in [
+        ### Check inputs
+        print(type(username))
+        if "" in [
             username,
             password,
             firstname,
@@ -37,10 +39,13 @@ def register():
         ]:
             error = "All fields are required."
 
-        # TODO: sanitize and validate.
         # username must be an email address
-        if not valid_email(email=username):
+        elif not valid_email(email=username):
             error = "Please provide a valid email address."
+
+        # TODO: sanitize and validate.
+
+        ####
 
         if error is None:
             try:
@@ -88,7 +93,7 @@ def login():
         if not valid_email(email=username):
             error = "Please provide a valid email address."
 
-        #     
+        #
         if error is None:
             db = get_database()
             user = db.execute(
@@ -109,7 +114,7 @@ def login():
             session["user_id"] = user["user_id"]
             print(session)
             return redirect(url_for("posts.index"))
-        
+
         flash(error)
 
     return render_template("/auth/login.html")

@@ -1,6 +1,7 @@
 import os
 import tempfile
 import pytest
+from flask import current_app, g
 from setup import _setup as clabaireacht_setup
 from clabaireacht import create_app
 from clabaireacht.database import get_database
@@ -25,6 +26,16 @@ clabaireacht_setup(
 
 @pytest.fixture
 def app():
+    db_fd, db_path = tempfile.mkstemp()
+    # Create a testing db.
+    clabaireacht_setup(
+        delete=False,
+        db_path=db_path,
+        schema_path="./src/schema",
+        create_admin=False,
+        production=False,
+        db_name="testing",
+    )
 
     app = create_app(
         {
@@ -34,12 +45,14 @@ def app():
     )
 
     with app.app_context():
+        print(current_app.config)
+        # load the test data
         get_database().executescript(_data_sql)
 
     yield app
 
     os.close(db_fd)
-    os.unlink(sanitize_path(db_path))
+    os.unlink(sanitize_path(db_path) + "/testing.sqlite")
 
 
 @pytest.fixture

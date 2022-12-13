@@ -11,6 +11,9 @@ email-validator = "*"
 black = "*"
 bandit = "*"
 flake8 = "*"
+pytest = "*"
+coverage = "*"
+pytest-flask = "*"
 
 [requires]
 python_version = "3.9"

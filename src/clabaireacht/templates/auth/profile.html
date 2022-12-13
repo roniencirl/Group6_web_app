@@ -2,18 +2,24 @@
 
 {% block header %}
 <h1>{% block title %}Profile - {{ g.user['user_login'] }} {% endblock %}</h1>
+<p>Registered: {{ g.user['user_registered'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
+<p>Last Login: {{ g.user['user_last_login'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
+<p>Account status: {{ g.user['user_status'] }}</p>
 {% endblock %}
-
 {% block content %}
 <form method="post">
   <label for="username">Email address</label>
   <input name="username" id="username" required value="{{ g.user['user_login'] }}" readonly>
-  <label for="password">New Password</label>
-  <input type="password" name="password" id="password">
-  <label for="firstname">Firstname</label>
-  <input name="firstname" id="firstname" value="{{ g.user['user_firstname'] }}">
-  <label for="lastname">Lastname</label>
-  <input name="lastname" id="lastname" value="{{ g.user['user_lastname'] }}">
-  <input type="submit" value="Update">
+  <p>
+    <label for="firstname">Firstname</label>
+    <input name="firstname" id="firstname" value="{{ g.user['user_firstname'] }}">
+    <label for="lastname">Lastname</label>
+    <input name="lastname" id="lastname" value="{{ g.user['user_lastname'] }}">
+  <p>
+    <label for="password">New Password</label>
+    <input type="password" name="password" id="password">
+    <input type="submit" value="Update">
 </form>
-{% endblock %}
+<p><a href="{{ url_for('auth.deactivate') }}">Disable or delete Account</a>
+
+  {% endblock %}

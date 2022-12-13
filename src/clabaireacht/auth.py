@@ -43,9 +43,10 @@ def register():
         elif not valid_email(email=username):
             error = "Please provide a valid email address."
         # enforce password strength in production
-        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+        elif not current_app.config[
+            "SECRET_KEY"
+        ] == "dev" and not check_password_strength(password):
             error = "Weak password."
-
 
         # TODO: sanitize and validate.
 
@@ -156,6 +157,7 @@ def profile():
         password = request.form["password"]
         firstname = request.form["firstname"]
         lastname = request.form["lastname"]
+
         db = get_database()  # pylint: disable=invalid-name
         error = None
 
@@ -174,7 +176,9 @@ def profile():
                 ]
             )
         # enforce password strength in production
-        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+        elif not current_app.config[
+            "SECRET_KEY"
+        ] == "dev" and not check_password_strength(password):
             error = "Weak password."
 
         # TODO: sanitize and validate.
@@ -198,19 +202,74 @@ def profile():
                         ),
                         firstname,
                         lastname,
-                        "enabled",
+                        g.user["user_status"],
                         g.user["user_id"],
                     ),
                 )
                 db.commit()
             except db.IntegrityError:
-                error = f"User {username} is already registered."
+                error = f"An error occured updating {g.user['user_login']}."
             else:
                 return redirect(url_for("auth.profile"))
 
         flash(error)
 
     return render_template("/auth/profile.html")
+
+
+@bp.route("/deactivate", methods=("GET", "POST"))
+def deactivate():
+    if request.method == "POST":
+        password = request.form["password"]
+        action = request.form["disable"]
+        db = get_database()  # pylint: disable=invalid-name
+        error = None
+
+        if not check_password_hash(
+            g.user["user_password"],
+            current_app.config["PW_PEPPER_SECRET"] + password,
+        ):
+            error = "Incorrect password."
+
+        if error is None:
+            if action == "deactivate":
+                try:
+                    statement = "UPDATE users SET user_status = ?\
+                                WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (
+                            "disabled",
+                            g.user["user_id"],
+                        ),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured disabling {g.user['user_login']}."
+            elif action == "delete":
+                try:
+                    statement = "DELETE FROM users WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (g.user["user_id"],),
+                    )
+                    statement = "DELETE FROM posts WHERE author_id = ?"
+                    db.execute(
+                        statement,
+                        (g.user["user_id"],),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured deleting {g.user['user_login']}."
+            else:
+                return redirect(url_for("auth.profile"))
+        flash(error)
+
+    return render_template("/auth/deactivate.html")
 
 
 def login_required(view):

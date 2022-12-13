@@ -4,9 +4,13 @@ from . import database
 from . import posts
 from . import auth
 
-
+# Load environment variables
 PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
 SECRET_KEY = str(os.environ.get("SECRET_KEY", "dev"))
+MAX_CONTENT_LENGTH = int(
+    os.environ.get("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)
+)  # 16 MB
+
 
 # flask application factory
 def create_app(test_config=None):
@@ -17,6 +21,7 @@ def create_app(test_config=None):
         SECRET_KEY=SECRET_KEY,
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
         PW_PEPPER_SECRET=PW_PEPPER_SECRET,
+        MAX_CONTEXT_LENGTH=MAX_CONTENT_LENGTH,
     )
 
     # Load production configuration, if it exists, when not testing

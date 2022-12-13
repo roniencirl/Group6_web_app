@@ -10,6 +10,9 @@ from flask import (
     send_file,
 )
 from io import BytesIO
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 from sqlite3 import Binary
 from clabaireacht.database import get_database
 from clabaireacht.auth import login_required
@@ -45,25 +48,36 @@ def create():
 
     # TODO:  Sanitise the form input.
     print(type(image))
-    print(type(xcoord))
-
+    print(image)
     ## Check inputs
     if "" in [title, body]:
         error = "Title is required."
     ##
 
-    # Check if integers for x-y
+    #     Binary(image)
+    img_data = image.stream.read()
+    print(type(img_data))
+    colour = (255, 255, 255)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    # Run in meme mode Check if integers for x-y
     if "" not in [xcoord, ycoord]:
         if not xcoord.isdigit() or not ycoord.isdigit():
             error = "Coordinates must be digits."
         else:
             xcoord = int(xcoord)
             ycoord = int(ycoord)
-
-    #     Binary(image)
-    img_data = image.stream.read()
-
-    print(type(img_data))
+            # meme = cv2.imdecode(np.fromstring(img_data, dtype=np.uint8), 1)
+            # cv2.putText(meme, body, (xcoord, ycoord), font, 1, colour)
+            # cv2.imshow("meme", meme)
+            img = Image.open(image)
+            print(img.size)
+            id = ImageDraw.Draw(img)
+            myFont = ImageFont.truetype("FreeMono.ttf", size=40)
+            id.text((xcoord, ycoord), body, font=myFont, fill=colour)
+            print(type(img))
+            img_byte_arr = BytesIO()
+            img.save(img_byte_arr, format="jpeg")
+            img_data = img_byte_arr.getvalue()
 
     if error is not None:
         flash(error)

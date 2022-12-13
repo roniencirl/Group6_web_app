@@ -58,7 +58,7 @@ def create():
     img_data = image.stream.read()
     print(type(img_data))
     colour = (255, 255, 255)
-    font = cv2.FONT_HERSHEY_SIMPLEX
+    font = "FreeMono.ttf"
     # Run in meme mode Check if integers for x-y
     if "" not in [xcoord, ycoord]:
         if not xcoord.isdigit() or not ycoord.isdigit():
@@ -66,15 +66,11 @@ def create():
         else:
             xcoord = int(xcoord)
             ycoord = int(ycoord)
-            # meme = cv2.imdecode(np.fromstring(img_data, dtype=np.uint8), 1)
-            # cv2.putText(meme, body, (xcoord, ycoord), font, 1, colour)
-            # cv2.imshow("meme", meme)
+
             img = Image.open(image)
-            print(img.size)
             id = ImageDraw.Draw(img)
-            myFont = ImageFont.truetype("FreeMono.ttf", size=40)
+            myFont = ImageFont.truetype(font, size=40)
             id.text((xcoord, ycoord), body, font=myFont, fill=colour)
-            print(type(img))
             img_byte_arr = BytesIO()
             img.save(img_byte_arr, format="jpeg")
             img_data = img_byte_arr.getvalue()

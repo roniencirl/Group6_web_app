@@ -20,8 +20,11 @@
         <a class="action" href="{{ url_for('posts.update', id=post['id']) }}">Edit</a>
         {% endif %}
     </header>
+    {% if not post['xcoord'] %}
     <p class="body">{{ post['body'] }}</p>
-    <img class="image" src="/image/{{ post['id'] }}" style="width: 55vw; min-width: 330px;">
+    {% endif %}
+    {% if post['img'] %} <img class="image" src="/image/{{ post['id'] }}" style="width: 55vw; min-width: 330px;">
+    {% endif %}
 </article>
 {% if not loop.last %}
 <hr>

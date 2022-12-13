@@ -92,6 +92,7 @@ def create():
 @bp.route("/image/<int:ident>", methods=["GET"])
 def image_route(ident):
     database = get_database()
+    # TODO: add safety checks
     result = database.execute("select img from posts WHERE id = ?", (ident,)).fetchone()
     bytes_io = BytesIO(result[0])
 

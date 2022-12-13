@@ -1,6 +1,7 @@
 # Utility functions for sanitisation, parsing, security etc.
 import os
 from email_validator import validate_email, EmailNotValidError
+from password_strength import PasswordStats
 
 
 def sanitize_path(path: str) -> str:
@@ -18,3 +19,11 @@ def valid_email(email: str, mx_check: bool = False) -> bool:
         print(str(e))
         return False
     return True
+
+
+def check_password_strength(password: str, score: float = 0.66):
+    stats = PasswordStats(password).strength()
+    print(stats)
+    if stats >= score:
+        return True
+    return False

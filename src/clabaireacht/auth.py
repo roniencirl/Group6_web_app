@@ -1,5 +1,5 @@
 import functools
-
+from datetime import datetime
 from flask import (
     Blueprint,
     flash,
@@ -14,7 +14,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from clabaireacht.database import get_database
-from clabaireacht.utilities import valid_email
+from clabaireacht.utilities import valid_email, check_password_strength
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -42,6 +42,10 @@ def register():
         # username must be an email address
         elif not valid_email(email=username):
             error = "Please provide a valid email address."
+        # enforce password strength in production
+        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+            error = "Weak password."
+
 
         # TODO: sanitize and validate.
 
@@ -112,6 +116,12 @@ def login():
         if error is None:
             session.clear()
             session["user_id"] = user["user_id"]
+            # set the last login
+            db.set_trace_callback(print)
+            statement = """UPDATE users SET user_last_login = ? where user_id = ?"""
+            time = datetime.now()
+            db.execute(statement, (time, user["user_id"]))
+            db.commit()
             print(session)
             return redirect(url_for("posts.index"))
 
@@ -138,6 +148,69 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for("posts.index"))
+
+
+@bp.route("/profile", methods=("GET", "POST"))
+def profile():
+    if request.method == "POST":
+        password = request.form["password"]
+        firstname = request.form["firstname"]
+        lastname = request.form["lastname"]
+        db = get_database()  # pylint: disable=invalid-name
+        error = None
+
+        ### Check inputs
+        if "" in [
+            password,
+            firstname,
+            lastname,
+        ]:
+            error = "Fields cannot be empty."
+            print(
+                [
+                    password,
+                    firstname,
+                    lastname,
+                ]
+            )
+        # enforce password strength in production
+        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+            error = "Weak password."
+
+        # TODO: sanitize and validate.
+
+        ####
+
+        if error is None:
+            try:
+                statement = "UPDATE users SET user_password = ?, \
+                            user_firstname = ?,\
+                            user_lastname = ? ,\
+                            user_status = ?\
+                            WHERE user_id = ?"
+
+                db.execute(
+                    statement,
+                    (
+                        generate_password_hash(
+                            current_app.config["PW_PEPPER_SECRET"] + password,
+                            salt_length=32,
+                        ),
+                        firstname,
+                        lastname,
+                        "enabled",
+                        g.user["user_id"],
+                    ),
+                )
+                db.commit()
+            except db.IntegrityError:
+                error = f"User {username} is already registered."
+            else:
+                return redirect(url_for("auth.profile"))
+
+        flash(error)
+
+    return render_template("/auth/profile.html")
 
 
 def login_required(view):

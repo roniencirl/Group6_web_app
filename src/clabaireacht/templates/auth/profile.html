@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Profile - {{ g.user['user_login'] }} {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+  <label for="username">Email address</label>
+  <input name="username" id="username" required value="{{ g.user['user_login'] }}" readonly>
+  <label for="password">New Password</label>
+  <input type="password" name="password" id="password">
+  <label for="firstname">Firstname</label>
+  <input name="firstname" id="firstname" value="{{ g.user['user_firstname'] }}">
+  <label for="lastname">Lastname</label>
+  <input name="lastname" id="lastname" value="{{ g.user['user_lastname'] }}">
+  <input type="submit" value="Update">
+</form>
+{% endblock %}

@@ -1,7 +1,5 @@
 import sqlite3
-import click
 from flask import current_app, g
-
 
 def get_database():
     """Open database into the current application context."""

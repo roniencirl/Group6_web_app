@@ -9,7 +9,7 @@ def test_get_close_db(app):
         db = get_database()
         assert db is get_database()
 
-    close_database()        
+    close_database()
     with pytest.raises(sqlite3.ProgrammingError) as e:
         db.execute("SELECT 1")
 

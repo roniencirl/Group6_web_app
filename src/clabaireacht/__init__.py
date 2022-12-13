@@ -26,10 +26,11 @@ def create_app(test_config=None):
 
     # Load production configuration, if it exists, when not testing
     if test_config is None:
-        clabaireacht.config.from_pyfile("config.py", silent=True)
+        clabaireacht.config.from_pyfile("../config.py", silent=True)
     else:
         clabaireacht.config.from_mapping(test_config)
 
+    print(clabaireacht.config)
     # ensure the instance folder exists
     try:
         os.makedirs(clabaireacht.instance_path, mode=0o700)

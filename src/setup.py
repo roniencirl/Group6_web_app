@@ -10,6 +10,7 @@ DATABASE = "clabaireacht"
 
 def delete_db(path: str):
     try:
+        os.rename(path, path + "old")
         os.remove(path)
     except OSError as e:
         if e.errno != errno.ENOENT:
@@ -43,7 +44,7 @@ def load_schema(path: str, database: sqlite3.Connection):
     type=bool,
     is_flag=True,
     default=False,
-    help="Setup a strong secret key to protect session cookies.",
+    help="Setup a strong secrets to protect session cookies and password (pepper).",
 )
 def setup(
     delete: bool, db_path: str, schema_path: str, create_admin: bool, production: bool
@@ -70,10 +71,27 @@ def _setup(
     clean_schema_path = sanitize_path(schema_path)
 
     if production:
-        secret = f'SECRET_KEY = "{secrets.token_hex(32)}"'
+        secret = f'SECRET_KEY = "{secrets.token_hex(32)}"\n' # minimum 128bits https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+        pepper = f'PW_PEPPER_SECRET = "{secrets.token_hex(16)}"\n'  # minimum 112bits https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf
+
+        if os.path.exists("config.py"):
+            if not click.confirm(
+                "config.py exists, do you want to continue and modify it?"
+            ):
+                return
+            click.echo("Existing file renamed config.py.old .")
+            os.rename("config.py", "config.py.old")
+
         with open("config.py", "w") as config:
-            config.write(secret)
+            if click.confirm("Create new Session Cookie Secret Key?", default=False):
+                config.write(secret)
+            if click.confirm(
+                "Create new Password Pepper. NB: all previously saved passwords will be lost.",
+                default=False,
+            ):
+                config.write(pepper)
         config.close()
+        os.chmod("config.py", 0o600)
         return
 
     if delete:

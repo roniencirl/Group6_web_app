@@ -1,5 +1,5 @@
 import functools
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import (
     Blueprint,
     flash,
@@ -114,11 +114,36 @@ def login():
                 print(user["user_password"])
                 print(current_app.config["PW_PEPPER_SECRET"] + password)
 
+        # Check for last login time out
+        if error is None:
+            print(user["user_last_login"])
+            if user["user_last_login"] > (
+                datetime.now()
+                - timedelta(days=current_app.config["LOCK_ACCOUNT_DAYS"] * -1)
+            ):
+                # disable the account
+                try:
+                    statement = "UPDATE users SET user_status = ?\
+                                WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (
+                            "disabled",
+                            g.user["user_id"],
+                        ),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured disabling {g.user['user_login']}."
+                session.clear()
+                return redirect(url_for("posts.index"))
+
         if error is None:
             session.clear()
             session["user_id"] = user["user_id"]
             # set the last login
-            db.set_trace_callback(print)
             statement = """UPDATE users SET user_last_login = ? where user_id = ?"""
             time = datetime.now()
             db.execute(statement, (time, user["user_id"]))

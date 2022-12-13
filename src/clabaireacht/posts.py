@@ -25,7 +25,8 @@ bp = Blueprint("posts", __name__)
 def index():
     db = get_database()
     posts = db.execute(
-        "SELECT p.id, title, body, img, xcoord, ycoord, created, author_id, user_login, user_firstname, user_lastname"
+        "SELECT p.id, title, body, img, xcoord, ycoord, created, author_id,"
+        "user_login, user_firstname, user_lastname, user_status"
         " FROM posts p JOIN users u ON p.author_id = u.user_id"
         " ORDER BY created DESC"
     ).fetchall()

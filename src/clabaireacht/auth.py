@@ -12,12 +12,10 @@ from flask import (
     current_app,
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from clabaireacht.database import get_database
 from clabaireacht.utilities import valid_email, check_password_strength
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
-
 
 @bp.route("/register", methods=("GET", "POST"))
 def register():
@@ -30,7 +28,6 @@ def register():
         error = None
 
         ### Check inputs
-        print(type(username))
         if "" in [
             username,
             password,
@@ -47,6 +44,7 @@ def register():
             "SECRET_KEY"
         ] == "dev" and not check_password_strength(password):
             error = "Weak password."
+            del password  # best effort removal, python strings are immutable
 
         # TODO: sanitize and validate.
 
@@ -61,7 +59,6 @@ def register():
                                         user_lastname,\
                                         user_status )\
                                 VALUES (?, ?, ?, ?, ?)"
-
                 db.execute(
                     statement,
                     (
@@ -75,6 +72,7 @@ def register():
                         "enabled",
                     ),
                 )
+                del password  # best effort removal, python strings are immutable
                 db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
@@ -97,8 +95,9 @@ def login():
 
         if not valid_email(email=username):
             error = "Please provide a valid email address."
+            del password  # best effort removal, python strings are immutable
 
-        #
+        # Proceeed with Password check.
         if error is None:
             db = get_database()
             user = db.execute(
@@ -111,8 +110,7 @@ def login():
                 user["user_password"], current_app.config["PW_PEPPER_SECRET"] + password
             ):
                 error = "Incorrect email address or password."
-                print(user["user_password"])
-                print(current_app.config["PW_PEPPER_SECRET"] + password)
+            del password  # best effort removal, python strings are immutable
 
         # Check for last login time out to determine if account should be disabled.
         if error is None:
@@ -193,18 +191,12 @@ def profile():
             lastname,
         ]:
             error = "Fields cannot be empty."
-            print(
-                [
-                    password,
-                    firstname,
-                    lastname,
-                ]
-            )
         # enforce password strength in production
         elif not current_app.config[
             "SECRET_KEY"
         ] == "dev" and not check_password_strength(password):
             error = "Weak password."
+            del password  # best effort removal, python strings are immutable
 
         # TODO: sanitize and validate.
 
@@ -231,6 +223,7 @@ def profile():
                         g.user["user_id"],
                     ),
                 )
+                del password  # best effort removal, python strings are immutable
                 db.commit()
             except db.IntegrityError:
                 error = f"An error occured updating {g.user['user_login']}."

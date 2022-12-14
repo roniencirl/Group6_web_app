@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from flask import Flask, render_template
+from flask_wtf.csrf import CSRFProtect
 from . import database
 from . import posts
 from . import auth
@@ -18,18 +19,21 @@ LOCK_ACCOUNT_DAYS = int(
     os.environ.get("LOCK_ACCOUNT_DAYS", "30")
 )  # Lock inactive accounts after 30 days
 
+csrf = CSRFProtect()
 
 # flask application factory
 def create_app(test_config=None):
     clabaireacht = Flask(__name__, instance_relative_config=True)
     print(__name__)
-
+    csrf.init_app(clabaireacht) # enable CSRF protection
     clabaireacht.config.from_mapping(
         SECRET_KEY=SECRET_KEY,
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
         PW_PEPPER_SECRET=PW_PEPPER_SECRET,
         MAX_CONTEXT_LENGTH=MAX_CONTENT_LENGTH,
         PERMANENT_SESSION_LIFETIME=PERMANENT_SESSION_LIFETIME,
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         LOCK_ACCOUNT_DAYS=LOCK_ACCOUNT_DAYS,
     )

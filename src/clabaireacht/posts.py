@@ -70,7 +70,7 @@ def create():
 
             img = Image.open(image)
             id = ImageDraw.Draw(img)
-            myFont = ImageFont.truetype(font, size=40)
+            myFont = ImageFont.truetype(font, size=50)
             id.text((xcoord, ycoord), body, font=myFont, fill=colour)
             img_byte_arr = BytesIO()
             img.save(img_byte_arr, format="jpeg")

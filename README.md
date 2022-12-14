@@ -48,7 +48,11 @@ $ make python_check_format
 TODO:
 * add a Makefile for format, check and test. [Done]
 
-Running locally
+Running locally:
+Quick: 
+make run_dev 
+
+Details:
 ./Group6_web_app $ pipenv update 
 ./Group6_web_app $ pipenv shell
 (Group6_web_app-aBsMno69) ronie@debian:~/Masters/SPW/Group6_web_app_main$ cd src/
@@ -64,8 +68,12 @@ clabaireacht
  * Debugger PIN: 
 
 
-## Running in production.
+# WIP - this section is a work in progress
+## Quickstart running in production.
+Quick: make run_prod
 
+
+## Running in production:
 ### Install gunicorn
 from https://gunicorn.org/
 $ python3 -m pip install gunicorn

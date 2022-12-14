@@ -200,10 +200,6 @@ def profile():
             error = "Weak password."
             del password  # best effort removal, python strings are immutable
 
-        # TODO: sanitize and validate.
-
-        ####
-
         if error is None:
             try:
                 statement = "UPDATE users SET user_password = ?, \

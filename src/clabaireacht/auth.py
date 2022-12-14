@@ -114,7 +114,7 @@ def login():
                 print(user["user_password"])
                 print(current_app.config["PW_PEPPER_SECRET"] + password)
 
-        # Check for last login time out
+        # Check for last login time out to determine if account should be disabled.
         if error is None:
             print(user["user_last_login"])
             if user["user_last_login"] > (

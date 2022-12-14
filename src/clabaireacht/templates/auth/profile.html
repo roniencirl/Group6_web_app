@@ -8,6 +8,7 @@ Account status: {{ g.user['user_status'] }}
 {% endblock %}
 {% block content %}
 <form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <label for="username">Email address</label>
   <input name="username" id="username" required value="{{ g.user['user_login'] }}" readonly>
   <label for="firstname">Firstname</label>

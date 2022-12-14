@@ -47,23 +47,25 @@ def create():
     ycoord = request.form["ycoord"]
     error = None
 
-    # TODO:  Sanitise the form input.
-    print(type(image))
     print(image)
+
+    if image.content_type not in ["image/jpeg", "image/png", "image/gif"]:
+        error = f"Unsupported file type: {image.content_type}"
     ## Check inputs
     if "" in [title, body]:
-        error = "Title is required."
+        error = "Title and body are required."
     ##
 
     #     Binary(image)
     img_data = image.stream.read()
-    print(type(img_data))
     colour = (255, 255, 255)
     font = "FreeMono.ttf"
     # Run in meme mode Check if integers for x-y
     if "" not in [xcoord, ycoord]:
         if not xcoord.isdigit() or not ycoord.isdigit():
             error = "Coordinates must be digits."
+        elif image.content_type != "image/jpeg":
+            error = "Meme text overlay only supported with JPEG images."
         else:
             xcoord = int(xcoord)
             ycoord = int(ycoord)

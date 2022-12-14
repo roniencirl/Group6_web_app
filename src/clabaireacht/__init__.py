@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
+import secrets
 from . import database
 from . import posts
 from . import auth
@@ -10,8 +11,8 @@ from . import auth
 PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
 SECRET_KEY = str(os.environ.get("SECRET_KEY", "dev"))
 MAX_CONTENT_LENGTH = int(
-    os.environ.get("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)
-)  # 16 MB max content upload size
+    os.environ.get("MAX_CONTENT_LENGTH", 2 * 1024 * 1024)
+)  # 2 MB max content upload size
 PERMANENT_SESSION_LIFETIME = timedelta(
     minutes=int(os.environ.get("PERMANENT_SESSION_LIFETIME", "30"))
 )  # Timeout after 30 mintues without an action
@@ -25,7 +26,7 @@ csrf = CSRFProtect()
 def create_app(test_config=None):
     clabaireacht = Flask(__name__, instance_relative_config=True)
     print(__name__)
-    csrf.init_app(clabaireacht) # enable CSRF protection
+    csrf.init_app(clabaireacht)  # enable CSRF protection
     clabaireacht.config.from_mapping(
         SECRET_KEY=SECRET_KEY,
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
@@ -36,6 +37,7 @@ def create_app(test_config=None):
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         LOCK_ACCOUNT_DAYS=LOCK_ACCOUNT_DAYS,
+        WTF_CSRF_SECRET_KEY=secrets.token_hex(32), # Random CSRF secret every execution.
     )
 
     # Load production configuration, if it exists, when not testing

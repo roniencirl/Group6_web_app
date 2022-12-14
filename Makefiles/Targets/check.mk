@@ -19,14 +19,6 @@ else
 	make -f $(MAKEFILE) black_format
 endif
 
-.PHONY: node_format
-node_format:
-ifeq ($(strip $(shell find . -type f -name "package.json" -not -path "./Makefiles/*")),)
-	@echo "Did not find any package.json files. Skipping Node check"
-else
-	@echo "################## Running Node Check Format Stage ##################"
-	make -f $(MAKEFILE) standard_js_format
-endif
 
 .PHONY: docker_check
 docker_check:

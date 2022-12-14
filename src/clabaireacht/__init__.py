@@ -1,8 +1,8 @@
 import os
+import secrets
 from datetime import timedelta
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
-import secrets
 from . import database
 from . import posts
 from . import auth
@@ -37,7 +37,9 @@ def create_app(test_config=None):
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         LOCK_ACCOUNT_DAYS=LOCK_ACCOUNT_DAYS,
-        WTF_CSRF_SECRET_KEY=secrets.token_hex(32), # Random CSRF secret every execution.
+        WTF_CSRF_SECRET_KEY=secrets.token_hex(
+            32
+        ),  # Random CSRF secret every execution.
     )
 
     # Load production configuration, if it exists, when not testing

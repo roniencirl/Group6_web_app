@@ -1,3 +1,5 @@
+from io import BytesIO
+from sqlite3 import Binary
 from flask import (
     Blueprint,
     flash,
@@ -6,14 +8,11 @@ from flask import (
     render_template,
     request,
     url_for,
-    current_app,
     send_file,
 )
-from io import BytesIO
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from sqlite3 import Binary
 from clabaireacht.database import get_database
 from clabaireacht.auth import login_required
 
@@ -71,9 +70,9 @@ def create():
             ycoord = int(ycoord)
 
             img = Image.open(image)
-            id = ImageDraw.Draw(img)
+            img_draw = ImageDraw.Draw(img)
             myFont = ImageFont.truetype(font, size=50)
-            id.text((xcoord, ycoord), body, font=myFont, fill=colour)
+            img_draw.text((xcoord, ycoord), body, font=myFont, fill=colour)
             img_byte_arr = BytesIO()
             img.save(img_byte_arr, format="jpeg")
             img_data = img_byte_arr.getvalue()
@@ -105,7 +104,6 @@ def create():
 @bp.route("/image/<int:ident>", methods=["GET"])
 def image_route(ident):
     database = get_database()
-    # TODO: add safety checks
     result = database.execute("select img from posts WHERE id = ?", (ident,)).fetchone()
     bytes_io = BytesIO(result[0])
 

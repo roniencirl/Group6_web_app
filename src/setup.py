@@ -71,7 +71,7 @@ def _setup(
     clean_schema_path = sanitize_path(schema_path)
 
     if production:
-        secret = f'SECRET_KEY = "{secrets.token_hex(32)}"\n' # minimum 128bits https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
+        secret = f'SECRET_KEY = "{secrets.token_hex(32)}"\n'  # minimum 128bits https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
         pepper = f'PW_PEPPER_SECRET = "{secrets.token_hex(16)}"\n'  # minimum 112bits https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf
 
         if os.path.exists("config.py"):

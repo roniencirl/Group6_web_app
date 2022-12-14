@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 flask = "*"
 email-validator = "*"
+password-strength = "*"
+pillow = "*"
 
 [dev-packages]
 black = "*"

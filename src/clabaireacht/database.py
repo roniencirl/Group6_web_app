@@ -1,6 +1,7 @@
 import sqlite3
 from flask import current_app, g
 
+
 def get_database():
     """Open database into the current application context."""
     if "database" not in g:

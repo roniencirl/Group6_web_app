@@ -1,5 +1,5 @@
 import functools
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import (
     Blueprint,
     flash,
@@ -43,9 +43,10 @@ def register():
         elif not valid_email(email=username):
             error = "Please provide a valid email address."
         # enforce password strength in production
-        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+        elif not current_app.config[
+            "SECRET_KEY"
+        ] == "dev" and not check_password_strength(password):
             error = "Weak password."
-
 
         # TODO: sanitize and validate.
 
@@ -113,11 +114,36 @@ def login():
                 print(user["user_password"])
                 print(current_app.config["PW_PEPPER_SECRET"] + password)
 
+        # Check for last login time out
+        if error is None:
+            print(user["user_last_login"])
+            if user["user_last_login"] > (
+                datetime.now()
+                - timedelta(days=current_app.config["LOCK_ACCOUNT_DAYS"] * -1)
+            ):
+                # disable the account
+                try:
+                    statement = "UPDATE users SET user_status = ?\
+                                WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (
+                            "disabled",
+                            g.user["user_id"],
+                        ),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured disabling {g.user['user_login']}."
+                session.clear()
+                return redirect(url_for("posts.index"))
+
         if error is None:
             session.clear()
             session["user_id"] = user["user_id"]
             # set the last login
-            db.set_trace_callback(print)
             statement = """UPDATE users SET user_last_login = ? where user_id = ?"""
             time = datetime.now()
             db.execute(statement, (time, user["user_id"]))
@@ -156,6 +182,7 @@ def profile():
         password = request.form["password"]
         firstname = request.form["firstname"]
         lastname = request.form["lastname"]
+
         db = get_database()  # pylint: disable=invalid-name
         error = None
 
@@ -174,7 +201,9 @@ def profile():
                 ]
             )
         # enforce password strength in production
-        elif not current_app.config["SECRET_KEY"] == "dev" and not check_password_strength(password):
+        elif not current_app.config[
+            "SECRET_KEY"
+        ] == "dev" and not check_password_strength(password):
             error = "Weak password."
 
         # TODO: sanitize and validate.
@@ -198,19 +227,74 @@ def profile():
                         ),
                         firstname,
                         lastname,
-                        "enabled",
+                        g.user["user_status"],
                         g.user["user_id"],
                     ),
                 )
                 db.commit()
             except db.IntegrityError:
-                error = f"User {username} is already registered."
+                error = f"An error occured updating {g.user['user_login']}."
             else:
                 return redirect(url_for("auth.profile"))
 
         flash(error)
 
     return render_template("/auth/profile.html")
+
+
+@bp.route("/deactivate", methods=("GET", "POST"))
+def deactivate():
+    if request.method == "POST":
+        password = request.form["password"]
+        action = request.form["disable"]
+        db = get_database()  # pylint: disable=invalid-name
+        error = None
+
+        if not check_password_hash(
+            g.user["user_password"],
+            current_app.config["PW_PEPPER_SECRET"] + password,
+        ):
+            error = "Incorrect password."
+
+        if error is None:
+            if action == "deactivate":
+                try:
+                    statement = "UPDATE users SET user_status = ?\
+                                WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (
+                            "disabled",
+                            g.user["user_id"],
+                        ),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured disabling {g.user['user_login']}."
+            elif action == "delete":
+                try:
+                    statement = "DELETE FROM users WHERE user_id = ?"
+                    db.execute(
+                        statement,
+                        (g.user["user_id"],),
+                    )
+                    statement = "DELETE FROM posts WHERE author_id = ?"
+                    db.execute(
+                        statement,
+                        (g.user["user_id"],),
+                    )
+                    db.commit()
+                    session.clear()
+                    return redirect(url_for("posts.index"))
+                except db.IntegrityError:
+                    error = f"An error occured deleting {g.user['user_login']}."
+            else:
+                return redirect(url_for("auth.profile"))
+        flash(error)
+
+    return render_template("/auth/deactivate.html")
 
 
 def login_required(view):

@@ -2,13 +2,16 @@
 
 {% block header %}
 <h1>{% block title %}Deactivate or Delete Account - {{ g.user['user_login'] }} {% endblock %}</h1>
-<p>Registered: {{ g.user['user_registered'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
-<p>Last Login: {{ g.user['user_last_login'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
-<p>Account status: {{ g.user['user_status'] }}</p>
+Registered: {{ g.user['user_registered'].strftime('%Y-%m-%d %H:%M:%S') }}
+Last Login: {{ g.user['user_last_login'].strftime('%Y-%m-%d %H:%M:%S') }}
+Account status: {{ g.user['user_status'] }}
 {% endblock %}
 {% block content %}
-<p>Deactivating your account will not remove any posts. A moderator/manager can reenable your account.</p>
-<p>Deleting your account will remove the account and all posts permanently.</p>
+<p>Deactivating your account will not remove any posts.
+A moderator/manager can reenable your account.
+  
+Deleting your account will remove the account and all posts permanently.
+</p>
 <form method="post">
   <label for="username">Email address</label>
   <input name="username" id="username" required value="{{ g.user['user_login'] }}" readonly>
@@ -19,8 +22,7 @@
     <input name="disable" id="deactivate" type="radio" value="deactivate">
     <label for="disable">Delete My Account</label>
     <input name="disable" id="delete" type="radio" value="delete">
-    <input type="submit" value="Proceed">
-
+    <input type="submit" value="Proceed">  <button onclick="javascript:location.href='{{ url_for('auth.profile') }}'">Cancel</button>
 </form>
-<button onclick="javascript:location.href='{{ url_for('auth.profile') }}'">Cancel</button>
+
 {% endblock %}

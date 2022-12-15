@@ -102,7 +102,6 @@ def login():
             user = db.execute(
                 "SELECT * FROM users WHERE user_login = ?", (username,)
             ).fetchone()
-
             if None in [user, password]:
                 error = "Please provide an email address and password."
             elif not check_password_hash(
@@ -126,7 +125,7 @@ def login():
                         statement,
                         (
                             "disabled",
-                            g.user["user_id"],
+                            user["user_id"],
                         ),
                     )
                     db.commit()
@@ -166,6 +165,13 @@ def load_logged_in_user():
             .execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
             .fetchone()
         )
+        statement = "SELECT n.group_name FROM user_groups g\
+                     LEFT JOIN users u ON g.user_id = u.user_id\
+                     LEFT JOIN groups n ON n.group_id = g.group_id\
+                     WHERE u.user_id = ?"
+        g.groups = [
+            x[0] for x in get_database().execute(statement, (user_id,)).fetchall()
+        ]  # Covert row to a list
 
 
 @bp.route("/logout")
@@ -287,6 +293,22 @@ def deactivate():
         flash(error)
 
     return render_template("/auth/deactivate.html")
+
+
+#  select u.user_login, n.group_name  from user_groups g LEFT JOIN users u ON g.user_id = u.user_id LEFT JOIN groups n ON n.group_id = g.group_id WHERE u.user_login = "moo@cow.com";
+# moo@cow.com|chatterboxes
+# select *  from user_groups g LEFT JOIN users u ON g.user_id = u.user_id LEFT JOIN groups n ON n.group_id = g.group_id;
+# 1|3|2|3|moo@cow.com|pbkdf2:sha256:260000$1gCdVwqWLO1dGEVmT3SjAD3wlABzDj7l$c28d32a34af32c6a8f449c190e166d406ef428b2150550832292b76fca8fd274|moo|cow|2022-12-13 15:52:08|2022-12-14 14:08:35.578991|enabled|2|chatterboxes
+# 2|3|3|3|moo@cow.com|pbkdf2:sha256:260000$1gCdVwqWLO1dGEVmT3SjAD3wlABzDj7l$c28d32a34af32c6a8f449c190e166d406ef428b2150550832292b76fca8fd274|moo|cow|2022-12-13 15:52:08|2022-12-14 14:08:35.578991|enabled|3|natterers
+
+# add user to group
+# INSERT INTO user_groups (user_id, group_id) VALUES (2,3);
+# INSERT INTO groups (group_name) VALUES ("natterers");
+# group id 1 is managers.
+
+# select n.group_name  from user_groups g LEFT JOIN users u ON g.user_id = u.user_id LEFT JOIN groups n ON n.group_id = g.group_id WHERE u.user_id=3;
+# chatterboxes
+# natterers
 
 
 def login_required(view):

@@ -8,12 +8,15 @@
 
 {% block content %}
 <form enctype="multipart/form-data" method="POST" post>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] }}" required>
     <label for="body">Body text</label>
     <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
+Include an (optional) image with your post:
     <label for="image">Image</label>
     <input name="image" type="file" id="image">
+If you include an image and also provide x-y coordinates it will become a meme:
     <label for="xcoord">X coordindates</label>
     <input name="xcoord" id="xcoord">
     <label for="ycoord">Y coordindates</label>

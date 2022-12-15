@@ -1,3 +1,4 @@
+""" Module containing authentication related actions"""
 import functools
 from datetime import datetime, timedelta
 from flask import (
@@ -12,7 +13,6 @@ from flask import (
     current_app,
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from clabaireacht.database import get_database
 from clabaireacht.utilities import valid_email, check_password_strength
 
@@ -21,6 +21,7 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @bp.route("/register", methods=("GET", "POST"))
 def register():
+    """Register a new user"""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -30,7 +31,6 @@ def register():
         error = None
 
         ### Check inputs
-        print(type(username))
         if "" in [
             username,
             password,
@@ -47,10 +47,7 @@ def register():
             "SECRET_KEY"
         ] == "dev" and not check_password_strength(password):
             error = "Weak password."
-
-        # TODO: sanitize and validate.
-
-        ####
+            del password  # best effort removal, python strings are immutable
 
         if error is None:
             try:
@@ -61,7 +58,6 @@ def register():
                                         user_lastname,\
                                         user_status )\
                                 VALUES (?, ?, ?, ?, ?)"
-
                 db.execute(
                     statement,
                     (
@@ -75,6 +71,7 @@ def register():
                         "enabled",
                     ),
                 )
+                del password  # best effort removal, python strings are immutable
                 db.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
@@ -88,17 +85,18 @@ def register():
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
+    """Login a user"""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        # TODO: Sanitise
         error = None
 
         if not valid_email(email=username):
             error = "Please provide a valid email address."
+            del password  # best effort removal, python strings are immutable
 
-        #
+        # Proceeed with Password check.
         if error is None:
             db = get_database()
             user = db.execute(
@@ -111,8 +109,7 @@ def login():
                 user["user_password"], current_app.config["PW_PEPPER_SECRET"] + password
             ):
                 error = "Incorrect email address or password."
-                print(user["user_password"])
-                print(current_app.config["PW_PEPPER_SECRET"] + password)
+            del password  # best effort removal, python strings are immutable
 
         # Check for last login time out to determine if account should be disabled.
         if error is None:
@@ -158,6 +155,7 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
+    """Load user session"""
     user_id = session.get("user_id")
 
     if user_id is None:
@@ -172,12 +170,14 @@ def load_logged_in_user():
 
 @bp.route("/logout")
 def logout():
+    """Logout a user"""
     session.clear()
     return redirect(url_for("posts.index"))
 
 
 @bp.route("/profile", methods=("GET", "POST"))
 def profile():
+    """Update a users profile"""
     if request.method == "POST":
         password = request.form["password"]
         firstname = request.form["firstname"]
@@ -193,18 +193,12 @@ def profile():
             lastname,
         ]:
             error = "Fields cannot be empty."
-            print(
-                [
-                    password,
-                    firstname,
-                    lastname,
-                ]
-            )
         # enforce password strength in production
         elif not current_app.config[
             "SECRET_KEY"
         ] == "dev" and not check_password_strength(password):
             error = "Weak password."
+            del password  # best effort removal, python strings are immutable
 
         # TODO: sanitize and validate.
 
@@ -231,6 +225,7 @@ def profile():
                         g.user["user_id"],
                     ),
                 )
+                del password  # best effort removal, python strings are immutable
                 db.commit()
             except db.IntegrityError:
                 error = f"An error occured updating {g.user['user_login']}."
@@ -244,6 +239,7 @@ def profile():
 
 @bp.route("/deactivate", methods=("GET", "POST"))
 def deactivate():
+    """Disable or delete a users account"""
     if request.method == "POST":
         password = request.form["password"]
         action = request.form["disable"]
@@ -298,6 +294,8 @@ def deactivate():
 
 
 def login_required(view):
+    """Login is required for all views here"""
+
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

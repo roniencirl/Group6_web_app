@@ -2,7 +2,7 @@ MYPY_EXE := docker run --rm \
 		-v $(shell pwd):/data \
 		-w=/data \
 		cytopia/mypy\
-			. 
+			.
 
 .PHONY: create_mypy_ini
 create_mypy_ini:

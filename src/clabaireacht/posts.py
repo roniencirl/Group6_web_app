@@ -46,16 +46,12 @@ def create():
     ycoord = request.form["ycoord"]
     error = None
 
-    print(image)
-
     if image.content_type not in ["image/jpeg", "image/png", "image/gif"]:
         error = f"Unsupported file type: {image.content_type}"
-    ## Check inputs
+
     if "" in [title, body]:
         error = "Title and body are required."
-    ##
 
-    #     Binary(image)
     img_data = image.stream.read()
     colour = (255, 255, 255)
     font = "FreeMono.ttf"

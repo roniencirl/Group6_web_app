@@ -48,7 +48,11 @@ $ make python_check_format
 TODO:
 * add a Makefile for format, check and test. [Done]
 
-Running locally
+Running locally:
+Quick: 
+make run_dev 
+
+Details:
 ./Group6_web_app $ pipenv update 
 ./Group6_web_app $ pipenv shell
 (Group6_web_app-aBsMno69) ronie@debian:~/Masters/SPW/Group6_web_app_main$ cd src/
@@ -62,3 +66,22 @@ clabaireacht
 <Config {'ENV': 'production', 'DEBUG': True, 'TESTING': False, 'PROPAGATE_EXCEPTIONS': None, 'SECRET_KEY': 'dev', 'PERMANENT_SESSION_LIFETIME': datetime.timedelta(seconds=1800), 'USE_X_SENDFILE': False, 'SERVER_NAME': None, 'APPLICATION_ROOT': '/', 'SESSION_COOKIE_NAME': 'session', 'SESSION_COOKIE_DOMAIN': None, 'SESSION_COOKIE_PATH': None, 'SESSION_COOKIE_HTTPONLY': True, 'SESSION_COOKIE_SECURE': False, 'SESSION_COOKIE_SAMESITE': 'Lax', 'SESSION_REFRESH_EACH_REQUEST': True, 'MAX_CONTENT_LENGTH': None, 'SEND_FILE_MAX_AGE_DEFAULT': None, 'TRAP_BAD_REQUEST_ERRORS': None, 'TRAP_HTTP_EXCEPTIONS': False, 'EXPLAIN_TEMPLATE_LOADING': False, 'PREFERRED_URL_SCHEME': 'http', 'JSON_AS_ASCII': None, 'JSON_SORT_KEYS': None, 'JSONIFY_PRETTYPRINT_REGULAR': None, 'JSONIFY_MIMETYPE': None, 'TEMPLATES_AUTO_RELOAD': None, 'MAX_COOKIE_SIZE': 4093, 'DATABASE': '/home/ronie/Masters/SPW/Group6_web_app/src/instance/clabaireacht.sqlite', 'PW_PEPPER_SECRET': '', 'MAX_CONTEXT_LENGTH': 16777216, 'LOCK_ACCOUNT_DAYS': 30}>
  * Debugger is active!
  * Debugger PIN: 
+
+
+# WIP - this section is a work in progress
+## Quickstart running in production.
+Quick: make run_prod
+
+
+## Running in production:
+### Install gunicorn
+from https://gunicorn.org/
+$ python3 -m pip install gunicorn
+
+### While testing you can use a self signed certificate.
+./Group65_web_app $ mkdir ssl 
+./Group6_web_app $ openssl req -x509 -newkey rsa:4096 -keyout ./ssl/key.pem -out ./ssl/cert.pem -sha256 -days 30 -nodes -subj '/CN=localhost'
+
+###
+gunicorn -w 1 'clabaireacht:create_app()' --keyfile ../ssl/key.pem --certfile ../ssl/cert.crt 
+

@@ -57,7 +57,7 @@ def create_app(test_config=None):
 
     @clabaireacht.route("/ping")
     def pong() -> str:
-        """ " Web application reachability check"""
+        """Web application reachability check"""
         return "pong"
 
     clabaireacht.register_blueprint(auth.bp)

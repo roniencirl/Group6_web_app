@@ -102,7 +102,6 @@ def login():
             user = db.execute(
                 "SELECT * FROM users WHERE user_login = ?", (username,)
             ).fetchone()
-
             if None in [user, password]:
                 error = "Please provide an email address and password."
             elif not check_password_hash(
@@ -126,7 +125,7 @@ def login():
                         statement,
                         (
                             "disabled",
-                            g.user["user_id"],
+                            user["user_id"],
                         ),
                     )
                     db.commit()
@@ -166,6 +165,13 @@ def load_logged_in_user():
             .execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
             .fetchone()
         )
+        statement = "SELECT n.group_name FROM user_groups g\
+                     LEFT JOIN users u ON g.user_id = u.user_id\
+                     LEFT JOIN groups n ON n.group_id = g.group_id\
+                     WHERE u.user_id = ?"
+        g.groups = [
+            x[0] for x in get_database().execute(statement, (user_id,)).fetchall()
+        ]  # Covert row to a list
 
 
 @bp.route("/logout")

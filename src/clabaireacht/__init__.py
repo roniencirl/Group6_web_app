@@ -3,9 +3,11 @@ import secrets
 from datetime import timedelta
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
+from flask_talisman import Talisman
 from . import database
 from . import posts
 from . import auth
+from . import groups
 
 # Load environment variables
 PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
@@ -21,12 +23,14 @@ LOCK_ACCOUNT_DAYS = int(
 )  # Lock inactive accounts after 30 days
 
 csrf = CSRFProtect()
+talisman = Talisman()
 
 # flask application factory
 def create_app(test_config=None):
     clabaireacht = Flask(__name__, instance_relative_config=True)
     print(__name__)
-    csrf.init_app(clabaireacht)  # enable CSRF protection
+    csrf.init_app(clabaireacht)  # Enable CSRF protection
+    talisman.init_app(clabaireacht)  # Enable HTTP security headers
     clabaireacht.config.from_mapping(
         SECRET_KEY=SECRET_KEY,
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
@@ -62,5 +66,6 @@ def create_app(test_config=None):
 
     clabaireacht.register_blueprint(auth.bp)
     clabaireacht.register_blueprint(posts.bp)
+    clabaireacht.register_blueprint(groups.bp)
 
     return clabaireacht

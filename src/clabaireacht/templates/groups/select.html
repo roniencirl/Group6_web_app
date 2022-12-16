@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Select User{% endblock %}</h1>
+
+{% endblock %}
+{% block content %}
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  {% for item in g.users %}
+  <label for="user_id">{{ item['user_login'] }}</label>
+  <input name="user_id" id="{{ item['user_id'] }}" type="checkbox" value="{{ item['user_id'] }}">
+  {% endfor %}
+  <input type="submit" value="Proceed"> <button
+    onclick="javascript:location.href='{{ url_for('auth.profile') }}'">Cancel</button>
+</form>
+
+{% endblock %}

@@ -7,6 +7,8 @@
         {% if g.user %}
         <li><span>{{ g.user['user_login'] }}</span>
         <li><a href="{{ url_for('auth.profile') }}">My Profile</a>
+            {% if "managers" in g.groups %}
+        <li><a href="{{ url_for('groups.select')}}">Manage User's Groups</a>{% endif %}
         <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
             {% else %}
         <li><a href="{{ url_for('auth.register') }}">Register</a>

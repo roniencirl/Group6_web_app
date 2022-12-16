@@ -5,10 +5,12 @@
 Registered: {{ g.user['user_registered'].strftime('%Y-%m-%d %H:%M:%S') }}
 Last Login: {{ g.user['user_last_login'].strftime('%Y-%m-%d %H:%M:%S') }}
 Account status: {{ g.user['user_status'] }}
+Groups: {% for item in g.groups %}{{item}} {% endfor %}
+
 {% endblock %}
 {% block content %}
 <form method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <label for="username">Email address</label>
   <input name="username" id="username" required value="{{ g.user['user_login'] }}" readonly>
   <label for="firstname">Firstname</label>

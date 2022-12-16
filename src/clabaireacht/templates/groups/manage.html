@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Manage Groups{% endblock %}</h1>
+Groups: {% for item in g.groups %}{{item}} {% endfor %}
+
+{% endblock %}
+{% block content %}
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+  {% for item in g.groups %}
+  <label for="groups">{{ item }}</label>
+  <input name="groups" id="{{ item }}" type="checkbox" value="{{ item }}">
+  {% endfor %}
+  <input type="submit" value="Proceed"> <button
+    onclick="javascript:location.href='{{ url_for('auth.profile') }}'">Cancel</button>
+</form>
+
+{% endblock %}

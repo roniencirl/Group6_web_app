@@ -7,20 +7,62 @@
 
 
 {% block content %}
-<form enctype="multipart/form-data" method="POST" post>
+
+
+<form class="w-50 m-auto mt-3 mb-5 bg-light p-4" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" name="title" class="form-control" id="title" value="{{ request.form['title'] }}" required>
+    </div>
+  
+    <div class="mb-3">
+      <label for="body" class="form-label">Content</label>
+      <textarea type="text" name="body" class="form-control" id="body" rows="10" required> {{ request.form['body'] }} </textarea>
+    </div>
+    
+    <div class="mb-3">
+        <label for="image" class="form-label"> Include an (optional) image with your post:</label>
+        <input type="file" name="image" class="form-control" id="image"  accept="image/jpeg">
+    </div>
+
+    <div class="row mb-3">
+        <label class="form-label mb-3"> If you include an image and also provide x-y coordinates it will become a meme:</label>
+        <div class="col-md-6">  
+            <label for="xcoord" class="form-label">X coordindates</label>
+            <input type="number" name="xcoord" id="xcoord" class="form-control">
+        </div>
+        <div class="col-md-6">  
+            <label for="ycoord" class="form-label"> Y coordindates</label>
+            <input type="number" name="ycoord" id="ycoord" class="form-control">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100" value="Save">Save</button>
+  </form>
+
+<!-- <form enctype="multipart/form-data" method="POST" post>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    
     <label for="body">Body text</label>
     <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
-Include an (optional) image with your post:
+
+    Include an (optional) image with your post:
     <label for="image">Image</label>
     <input name="image" type="file" id="image">
-If you include an image and also provide x-y coordinates it will become a meme:
+
+    If you include an image and also provide x-y coordinates it will become a meme:
+    
     <label for="xcoord">X coordindates</label>
     <input name="xcoord" id="xcoord">
+    
     <label for="ycoord">Y coordindates</label>
     <input name="ycoord" id="ycoord">
+    
     <input type="submit" value="Save">
-</form>
+
+</form> -->
 {% endblock %}

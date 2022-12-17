@@ -13,8 +13,8 @@ from . import groups
 PW_PEPPER_SECRET = str(os.environ.get("PW_PEPPER_SECRET", ""))
 SECRET_KEY = str(os.environ.get("SECRET_KEY", "dev"))
 MAX_CONTENT_LENGTH = int(
-    os.environ.get("MAX_CONTENT_LENGTH", 2 * 1024 * 1024)
-)  # 2 MB max content upload size
+    os.environ.get("MAX_CONTENT_LENGTH", 4 * 1024 * 1024)
+)  # 4 MB max content upload size, hard limit. A soft limit of 50% is applied on post image file upload.
 PERMANENT_SESSION_LIFETIME = timedelta(
     minutes=int(os.environ.get("PERMANENT_SESSION_LIFETIME", "30"))
 )  # Timeout after 30 mintues without an action
@@ -35,7 +35,7 @@ def create_app(test_config=None):
         SECRET_KEY=SECRET_KEY,
         DATABASE=os.path.join(clabaireacht.instance_path, "clabaireacht.sqlite"),
         PW_PEPPER_SECRET=PW_PEPPER_SECRET,
-        MAX_CONTEXT_LENGTH=MAX_CONTENT_LENGTH,
+        MAX_CONTENT_LENGTH=MAX_CONTENT_LENGTH,
         PERMANENT_SESSION_LIFETIME=PERMANENT_SESSION_LIFETIME,
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,

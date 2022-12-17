@@ -60,20 +60,20 @@
         </nav> -->
     </header>
 
-    <section class="mt-3 content container">
-        <header>
+    <div class="main-content mt-3 content container">
+        <div>
             {% block header %}{% endblock %}
-        </header>
+        </div>
         {% for message in get_flashed_messages() %}
         <div class="flash">{{ message }}</div>
         {% endfor %}
         {% block content %}{% endblock %}
-    </section>
+    </div>
 
 
-    <footer class="mt-3 text-center bg-dark sticky-bottom">
-        <div class="container">
-            Author: Hege Refsnes <a href="mailto:hege@example.com">hege@example.com</a>
+    <footer class="mt-3 text-center bg-dark p-4">
+        <div class="container fs-6 text-light">
+            Clabaireacht 2022
         </div>
     </footer>
 </body>

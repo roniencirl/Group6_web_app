@@ -22,6 +22,9 @@ bp = Blueprint("groups", __name__, url_prefix="/groups")
 @bp.route("/select", methods=("GET", "POST"))
 def select():
     """Select a user"""
+    if "managers" not in g.groups:
+        return redirect(url_for("posts.index"))
+
     if request.method == "POST":
         print(request.form)
         user_id = request.form["user_id"]
@@ -42,6 +45,8 @@ def select():
 @bp.route("/manage", methods=("GET", "POST"))
 def manage():
     error = None
+    if "managers" not in g.groups:
+        return redirect(url_for("posts.index"))
     if request.method == "POST":
         print(request.form.getlist("groups"))
         user_id = g.user["user_id"]
@@ -68,7 +73,6 @@ def manage():
 def load_logged_in_user():
     """Load user session"""
     user_id = session.get("user_id")
-
     if user_id is None:
         g.user = None
     else:
@@ -85,8 +89,6 @@ def load_logged_in_user():
             x[0] for x in get_database().execute(statement, (user_id,)).fetchall()
         ]  # Covert row to a list
         print(g.groups)
-        if "managers" not in g.groups:
-            return redirect(url_for("posts.index"))
         g.users = (
             get_database()
             .execute(
@@ -94,8 +96,6 @@ def load_logged_in_user():
             )
             .fetchall()
         )
-
-
 
 
 #  select u.user_login, n.group_name  from user_groups g LEFT JOIN users u ON g.user_id = u.user_id LEFT JOIN groups n ON n.group_id = g.group_id WHERE u.user_login = "moo@cow.com";

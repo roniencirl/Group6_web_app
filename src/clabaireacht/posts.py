@@ -2,6 +2,7 @@ from io import BytesIO
 from sqlite3 import Binary
 from flask import (
     Blueprint,
+    current_app,
     flash,
     g,
     redirect,
@@ -15,7 +16,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from clabaireacht.database import get_database
 from clabaireacht.auth import login_required
-
 
 bp = Blueprint("posts", __name__)
 
@@ -53,6 +53,9 @@ def create():
         error = "Title and body are required."
 
     img_data = image.stream.read()
+    if len(img_data) > current_app.config["MAX_CONTENT_LENGTH"] / 2:
+        error = f"Image file is too large. Max Size is {int(current_app.config['MAX_CONTENT_LENGTH'] / 2) } bytes."
+
     colour = (255, 255, 255)
     font = "FreeMono.ttf"
     # Run in meme mode Check if integers for x-y

@@ -1,5 +1,5 @@
 .PHONY: python_check
-python_check:
+python_check: ## Run black, pylint, mypy, bandit and safety checks
 ifeq ($(strip $(shell find . -type f -name "*.py" -not -path "./Makefiles/*")),)
 	echo "Did not find any .py files. Skipping Node check"
 else

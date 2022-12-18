@@ -8,7 +8,7 @@ BANDIT_EXE :=	docker run --rm \
 
 
 .PHONY: bandit_check 
-bandit_check:
+bandit_check: ## Run bandit SAST check
 	@echo "-------------------- Bandit Check --------------------"
 	${BANDIT_EXE}
 	make remove_bandit_ini

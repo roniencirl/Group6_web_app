@@ -6,7 +6,7 @@ BLACK_EXE := docker run --rm \
 	 -v .
 
 .PHONY: create_pytoml
-create_pytoml:
+create_pytoml: 
 	# start at tool.black, stop at newline immediately followed by [ (start of section header)
 	${SED_EXE} -n '/\[tool.black\]/,/^$[/p' setup.cfg > pyproject.toml
 
@@ -16,12 +16,12 @@ remove_pytoml:
 	rm $(REPO_DIR)/pyproject.toml
 
 .PHONY: black_format
-black_format:
+black_format: ## Format python files with black.
 	if [ ! -f $(REPO_DIR)/pyproject.toml ]; then make create_pytoml; fi
 	$(BLACK_EXE)
 
 .PHONY: black_check
-black_check:
+black_check: ## Run black formatting check.
 	@echo "-------------------- Black Lint --------------------"
 	if [ ! -f $(REPO_DIR)/pyproject.toml ]; then make create_pytoml; fi
 	$(BLACK_EXE) --check

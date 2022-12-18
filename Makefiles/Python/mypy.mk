@@ -13,7 +13,7 @@ remove_mypy_ini:
 	rm -f $(shell pwd)/mypy.ini
 
 .PHONY: mypy_check
-mypy_check: mypy_check
+mypy_check: ## Run mypy check
 	@echo "-------------------- MYPY Check --------------------"
 	if [ ! -f $(REPO_DIR)/pyproject.toml ]; then make create_mypy_ini; fi
 	${MYPY_EXE}

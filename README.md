@@ -1,6 +1,7 @@
-# Group6_web_app
 
-## Placeholder for MSCCYB1, Secure Programming for Web Group 6 project code.
+![Clabaireacht](https://github.com/roniencirl/Group6_web_app/blob/main/src/clabaireacht/static/img/clabaireacht.png)
+
+## MSCCYB1, Secure Programming for Web Group 6 project code.
 
 The 'clabaireacht' web app allows users to post messages and images in an informal journal style form for visitors or other users to read. 
 In Gaelige 'clabaireacht' means chit-chat or babbling. Pronunciation: https://www.teanglann.ie/en/fuaim/clabaireacht
@@ -68,10 +69,8 @@ clabaireacht
  * Debugger PIN: 
 
 
-# WIP - this section is a work in progress
 ## Quickstart running in production.
 Quick: make run_prod
-
 
 ## Running in production:
 ### Install gunicorn
